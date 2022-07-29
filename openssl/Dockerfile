@@ -17,9 +17,11 @@ RUN <<EOT
     zlib1g-dev
   curl -s https://www.openssl.org/source/openssl-1.1.1q.tar.gz | tar -C /usr/local/src -zx
   pushd /usr/local/src/openssl-1.1.1q
+
   ./config --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
+  sed -i 's/march=armv7-a/march=armv7-a+fp/' Makefile
   make -j $(nproc)
-  make -j $(nproc) test
+  make -j $(nproc) TESTS=-test_afalg test
   make install
   popd
   echo "/usr/local/ssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1q.conf
