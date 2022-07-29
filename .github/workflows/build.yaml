@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Set up QEMU for multiplatform support with buildx
-        uses: docker/setup-qemu-actions@v2.0.0
+        uses: docker/setup-qemu-action@v2.0.0
 
       - name: Set up Docker Buildx
         id: buildx
@@ -86,7 +86,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Set up QEMU for multiplatform support with buildx
-        uses: docker/setup-qemu-actions@v2.0.0
+        uses: docker/setup-qemu-action@v2.0.0
 
       - name: Set up Docker Buildx
         id: buildx
