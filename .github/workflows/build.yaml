@@ -65,6 +65,7 @@ jobs:
         uses: docker/build-push-action@v3.1.0
         with:
           cache-from: type=registry,ref=ghcr.io/djbender/openssl:latest
+          context: ./openssl
           labels: ${{ steps.meta.outputs.labels }}
           load: ${{ matrix.platform == 'linux/amd64' }}
           platforms: ${{ matrix.platform }}
@@ -114,6 +115,7 @@ jobs:
         with:
           cache-from: type=registry,ref=ghcr.io/djbender/openssl:latest
           cache-to: type=inline
+          context: ./openssl
           push: true
           platforms: linux/amd64,linux/arm64 # linux/386,linux/arm/v6,linux/arm/v7,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
