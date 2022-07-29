@@ -13,7 +13,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
-        experimental: false
+        experimental: [false]
         include:
           - platform: linux/riscv64
             experimental: true
@@ -21,15 +21,11 @@ jobs:
             experimental: true
           - platform: linux/s390x
             experimental: true
-          - platform: linux/386
-            experimental: true
           - platform: linux/arm/v7
-            experimental: true
-          - platform: linux/arm/v6
             experimental: true
 
     steps:
-      - uses: actions/checkout@3.0.2
+      - uses: actions/checkout@v3.0.2
         with:
           persist-credentials: false
       - name: Log in to GitHub Container Registry
@@ -37,10 +33,10 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU for multiplatform support with buildx
-        uses: docker/setup-qemu-actions@v2.0.0
+        uses: docker/setup-qemu-action@v2.0.0
 
       - name: Set up Docker Buildx
         id: buildx
@@ -65,17 +61,18 @@ jobs:
         uses: docker/build-push-action@v3.1.0
         with:
           cache-from: type=registry,ref=ghcr.io/djbender/openssl:latest
+          context: ./openssl
           labels: ${{ steps.meta.outputs.labels }}
           load: ${{ matrix.platform == 'linux/amd64' }}
           platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
 
   push:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@3.0.2
+      - uses: actions/checkout@v3.0.2
         with:
           persist-credentials: false
       - name: Log in to GitHub Container Registry
@@ -83,10 +80,10 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU for multiplatform support with buildx
-        uses: docker/setup-qemu-actions@v2.0.0
+        uses: docker/setup-qemu-action@v2.0.0
 
       - name: Set up Docker Buildx
         id: buildx
@@ -114,7 +111,8 @@ jobs:
         with:
           cache-from: type=registry,ref=ghcr.io/djbender/openssl:latest
           cache-to: type=inline
+          context: ./openssl
           push: true
-          platforms: linux/amd64,linux/arm64 # linux/386,linux/arm/v6,linux/arm/v7,linux/ppc64le,linux/s390x
+          platforms: linux/amd64,linux/arm64 # linux/arm/v7,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
