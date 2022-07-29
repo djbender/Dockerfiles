@@ -7,7 +7,7 @@ ENV OPENSSL_VERSION=1.1.1q
 RUN <<EOT
 #!/usr/bin/env bash
   set -exu
-  [ ! -z $APT_MIRROR ] \
+  [ ! -z ${APT_MIRROR:-} ] \
     && sed -i "s/archive.ubuntu.com/$APT_MIRROR/" /etc/apt/sources.list
   apt-get update
   apt-get install --no-install-recommends --yes \
