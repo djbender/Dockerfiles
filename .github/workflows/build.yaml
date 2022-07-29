@@ -13,7 +13,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
-        experimental: false
+        experimental: [false]
         include:
           - platform: linux/riscv64
             experimental: true
